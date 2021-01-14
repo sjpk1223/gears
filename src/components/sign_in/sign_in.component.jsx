@@ -1,57 +1,66 @@
-import React from 'react'; 
-import {FormInput} from '../form-input/form-input.component'
-import {FormButton} from '../button/button.component'
+import React from 'react';
+import { FormInput } from '../form-input/form-input.component'
+import { FormButton } from '../button/button.component'
 import './sign-in.styles.scss'
 
+import { auth, signInWithGoogle } from '../../firebase/firebase.utils'
 
-class SignIn extends React.Component{
-    constructor(props){
+
+class SignIn extends React.Component {
+    constructor(props) {
         super(props);
 
-        this.state ={
+        this.state = {
             email: '',
             password: ''
         }
     }
 
-    handleSubmit = (event) => {
-        event.preventDefault(); 
+    handleSubmit = async event => {
+        event.preventDefault();
 
         //sign in using (this.state); 
-       // console.log(this.state); 
+        // console.log(this.state); 
+        const { email, password } = this.state;
 
+        try {
+            await auth.signInWithEmailAndPassword(email, password);
+            this.setState({ email: '', password: '' });
+        } catch (error) {
+            console.log(error);
+        }
         this.setState({
             email: '',
             password: ''
-        }); 
+        });
     }
 
     handleChange = (event) => {
-       
-        const {name, value} = event.target; 
-        
-        this.setState({ [name] : value}); 
+
+        const { name, value } = event.target;
+
+        this.setState({ [name]: value });
     }
-    
-    render(){
-        return(
+
+    render() {
+        return (
             <>
-               <div className='sign-in'>
-                   <h2>I already have an account.</h2>
-                   <span>Sign in with email and password</span>
+                <div className='sign-in'>
+                    <h2>I already have an account.</h2>
+                    <span>Sign in with email and password</span>
 
 
-                   <form onSubmit={this.handleSubmit}>
-                       <FormInput 
+                    <form onSubmit={this.handleSubmit}>
+                        <FormInput
                             type="email"
                             name="email"
-                            value={this.state.email} 
+                            value={this.state.email}
                             handleChange={this.handleChange}
                             label='Email:'
                             required
-                       
-                       />
-                        
+
+                        />
+
                         <FormInput
                             type="password"
                             name="password"
@@ -61,12 +70,15 @@ class SignIn extends React.Component{
                             required
 
                         />
+                        <div className='buttons'>
+                            <FormButton type="submit">Sign In</FormButton>
+                            <FormButton onClick={signInWithGoogle} isGoogleSignIn>Sign in with Google</FormButton>
 
-                        <FormButton type="submit">Sign In</FormButton>
+                        </div>
 
-                   </form>
-                   
-                </div> 
+                    </form>
+
+                </div>
 
             </>
 
